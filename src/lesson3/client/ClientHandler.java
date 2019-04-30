@@ -14,6 +14,8 @@ public class ClientHandler implements Runnable {
 	private        PrintWriter outMessage;
 	private        Scanner     inMessage;
 
+	private String history = "";
+
 	public ClientHandler(Socket clientSocket, Server server) {
 		try {
 			clientsCount++;

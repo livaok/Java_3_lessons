@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ClientWindow extends JFrame {
+class ClientWindow extends JFrame {
 
 	private final static String      SERVER_HOST = "localhost";
 	private final static int         SERVER_PORT = 8880;
@@ -21,7 +21,7 @@ public class ClientWindow extends JFrame {
 
 	private String clientName;
 
-	public ClientWindow() throws HeadlessException {
+	ClientWindow() throws HeadlessException {
 		try {
 			clientSocket = new Socket(SERVER_HOST, SERVER_PORT);
 			inMessage = new Scanner(clientSocket.getInputStream());
@@ -85,21 +85,19 @@ public class ClientWindow extends JFrame {
 			}
 		});
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (true) {
-					if (inMessage.hasNext()) {
-						String inMsg = inMessage.nextLine();
-						String clientInChat = "In our chat client count is ";
-						if (inMsg.indexOf(clientInChat) == 0) {
-							clientsCountLabel.setText(inMsg);
-						}
-						else {
-							System.out.println(inMsg);
-							msgTextArea.append(inMsg);
-							msgTextArea.append("\n");
-						}
+		new Thread(() -> {
+			while (true) {
+				if (inMessage.hasNext()) {
+					String inMsg = inMessage.nextLine();
+					Singleton.INSTANCE.getQueue().add(inMsg);
+					String clientInChat = "In our chat client count is ";
+					if (inMsg.indexOf(clientInChat) == 0) {
+						clientsCountLabel.setText(inMsg);
+					}
+					else {
+						System.out.println(inMsg);
+						msgTextArea.append(inMsg);
+						msgTextArea.append("\n");
 					}
 				}
 			}
