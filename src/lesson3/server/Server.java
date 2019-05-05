@@ -6,11 +6,20 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
 
 	static final int PORT = 8880;
 	List<ClientHandler> clients = new ArrayList<ClientHandler>();
+
+
+	//число чловек в чате ограничено числом 100
+	ExecutorService executorService = Executors.newScheduledThreadPool(100, r -> {
+		Thread thread = new Thread(r);
+		return thread;
+	});
 
 	public Server() {
 		ServerSocket serverSocket = null;
@@ -24,7 +33,7 @@ public class Server {
 				clientSocket = serverSocket.accept();
 				ClientHandler client = new ClientHandler(clientSocket, this);
 				clients.add(client);
-				new Thread(client).start();
+				executorService.submit(client);
 			}
 		}
 		catch (Exception e) {
