@@ -14,11 +14,12 @@ public class Car implements Runnable {
 		CARS_COUNT = 0;
 	}
 
-	private Race   race;
-	private int    speed;
-	private String name;
+	private Race          race;
+	private int           speed;
+	private String        name;
 	private CyclicBarrier barrierWait;
 	private CyclicBarrier barrierGo;
+	private CyclicBarrier barrierEnd;
 
 	public String getName() {
 		return name;
@@ -28,13 +29,14 @@ public class Car implements Runnable {
 		return speed;
 	}
 
-	public Car(Race race, int speed, CyclicBarrier barrierWait, CyclicBarrier barrierGo) {
+	public Car(Race race, int speed, CyclicBarrier barrierWait, CyclicBarrier barrierGo, CyclicBarrier barrierEnd) {
 		this.race = race;
 		this.speed = speed;
 		CARS_COUNT++;
 		this.name = "Участник #" + CARS_COUNT;
 		this.barrierWait = barrierWait;
 		this.barrierGo = barrierGo;
+		this.barrierEnd = barrierEnd;
 	}
 
 	@Override
@@ -51,6 +53,12 @@ public class Car implements Runnable {
 		}
 		for (int i = 0; i < race.getStages().size(); i++) {
 			race.getStages().get(i).go(this);
+		}
+		try {
+			barrierEnd.await();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

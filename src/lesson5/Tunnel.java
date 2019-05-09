@@ -23,13 +23,13 @@ public class Tunnel extends Stage {
 				System.out.println(c.getName() + " готовится к этапу(ждет): " + description);
 				System.out.println(c.getName() + " начал этап: " + description);
 				Thread.sleep(length / c.getSpeed() * 1000);
-				semaphore.release();
 			}
 			catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			finally {
 				System.out.println(c.getName() + " закончил этап: " + description);
+				semaphore.release();
 			}
 		}
 		catch (Exception e) {
