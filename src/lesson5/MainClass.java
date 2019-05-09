@@ -1,6 +1,5 @@
 package lesson5;
 
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 /**
@@ -13,20 +12,35 @@ public class MainClass {
 
 	public static void main(String[] args) {
 
-		CyclicBarrier barrierWait = new CyclicBarrier(CARS_COUNT);
-		CyclicBarrier barrierGo = new CyclicBarrier(CARS_COUNT, () ->
-				System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!"));
-		CyclicBarrier barrierEnd = new CyclicBarrier(CARS_COUNT, () ->
-				System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!"));
+		CyclicBarrier barrier = new CyclicBarrier(CARS_COUNT, new RaceConditionTask());
 
 		System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Подготовка!!!");
+
 		Race race = new Race(new Road(60), new Tunnel(), new Road(40));
 		Car[] cars = new Car[CARS_COUNT];
+
 		for (int i = 0; i < cars.length; i++) {
-			cars[i] = new Car(race, 20 + (int) (Math.random() * 10), barrierWait, barrierGo, barrierEnd);
+			cars[i] = new Car(race, 20 + (int) (Math.random() * 10), barrier);
 		}
-		for (int i = 0; i < cars.length; i++) {
-			new Thread(cars[i]).start();
+
+		for (Car car : cars) {
+			new Thread(car).start();
+		}
+	}
+
+	private static class RaceConditionTask implements Runnable {
+
+		private int state;
+
+		@Override
+		public void run() {
+			if (state == 1) {
+				System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
+			}
+			if (state == 2) {
+				System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
+			}
+			state++;
 		}
 	}
 }

@@ -10,16 +10,17 @@ public class Car implements Runnable {
 
 	private static int CARS_COUNT;
 
-	static {
-		CARS_COUNT = 0;
-	}
-
 	private Race          race;
 	private int           speed;
 	private String        name;
-	private CyclicBarrier barrierWait;
-	private CyclicBarrier barrierGo;
-	private CyclicBarrier barrierEnd;
+	private CyclicBarrier barrier;
+
+	public Car(Race race, int speed, CyclicBarrier barrier) {
+		this.name = "Участник #" + (++CARS_COUNT);
+		this.race = race;
+		this.speed = speed;
+		this.barrier = barrier;
+	}
 
 	public String getName() {
 		return name;
@@ -29,33 +30,21 @@ public class Car implements Runnable {
 		return speed;
 	}
 
-	public Car(Race race, int speed, CyclicBarrier barrierWait, CyclicBarrier barrierGo, CyclicBarrier barrierEnd) {
-		this.race = race;
-		this.speed = speed;
-		CARS_COUNT++;
-		this.name = "Участник #" + CARS_COUNT;
-		this.barrierWait = barrierWait;
-		this.barrierGo = barrierGo;
-		this.barrierEnd = barrierEnd;
-	}
-
 	@Override
 	public void run() {
 		try {
 			System.out.println(this.name + " готовится");
-			barrierWait.await();
+			barrier.await();
+
 			Thread.sleep(500 + (int) (Math.random() * 800));
 			System.out.println(this.name + " готов");
-			barrierGo.await();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < race.getStages().size(); i++) {
-			race.getStages().get(i).go(this);
-		}
-		try {
-			barrierEnd.await();
+			barrier.await();
+
+			for (int i = 0; i < race.getStages().size(); i++) {
+				race.getStages().get(i).go(this);
+			}
+
+			barrier.await();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
