@@ -33,5 +33,4 @@ class ListForWork {
 
 		return list;
 	}
-
 }

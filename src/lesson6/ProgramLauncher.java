@@ -20,5 +20,9 @@ public class ProgramLauncher {
 		array.add(1);
 
 		System.out.println(new ListForWork().returnArray(array));
+
+		int[] arrayInt = {2, 2, 5, 6};
+
+		System.out.println(new ArrayForCheck().checkArray(arrayInt));
 	}
 }

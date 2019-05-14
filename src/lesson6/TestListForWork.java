@@ -58,5 +58,4 @@ public class TestListForWork {
 			add(1);
 		}}));
 	}
-
 }
