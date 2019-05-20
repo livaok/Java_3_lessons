@@ -6,12 +6,12 @@
     </Properties>
 
     <Appenders>
-        <File name="FILE" fileName="${basePath}/logfile.log" append="true">
-            <PatternLayout pattern="%-5p %d{yyyy-MM-dd HH:mm:ss} [%t] %C (%F:%L) - %m%n" />
+        <File name="FILE" fileName="${basePath}/loginfo.log" append="true">
+            <PatternLayout pattern="%-5p %d{yyyy-MM-dd HH:mm:ss} [%t] %C - %m%n" />
         </File>
 
         <Console name="STDOUT" target="SYSTEM_OUT">
-            <PatternLayout pattern="%-5p %d{yyyy-MM-dd HH:mm:ss} [%t] %C (%F:%L) - %m%n" />
+            <PatternLayout pattern="%-5p %d{yyyy-MM-dd HH:mm:ss} [%t] %C - %m%n" />
         </Console>
     </Appenders>
 
