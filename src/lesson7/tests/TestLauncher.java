@@ -4,6 +4,7 @@ package lesson7.tests;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Stream;
@@ -18,30 +19,28 @@ public class TestLauncher {
 
 	public static void start(Class clazz) {
 		Method[] methods = clazz.getDeclaredMethods();
+		List<Method> methodArrayList = new ArrayList<>();
 
-		Stream.of(methods).filter(method -> {
-			if (method.getAnnotation(BeforeSuite.class) != null) {
-				return true;
+		for (Method method: methods) {
+			if (method.getAnnotations() != null){
+				methodArrayList.add(method);
 			}
-			if (method.getAnnotation(AfterSuite.class) != null) {
-				return true;
+		}
+
+		methodArrayList.sort(new MethodComparator());
+
+		for (Method method : methodArrayList) {
+			try {
+				logger.info("Before invoke method {} for class {}", method.getName(), method.getDeclaringClass());
+				method.invoke(clazz.newInstance());
 			}
-			return method.getAnnotation(Test.class) != null;
-		})
-				.sorted(new MethodComparator())
-				.forEach(method -> {
-					logger.info("Before invoke method {} for class {}", method.getName(), method.getDeclaringClass());
-					try {
-						//TODO
-						method.invoke(clazz.newInstance());
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
-					finally {
-						logger.info("After invoke method {} for class {}", method.getName(), method.getDeclaringClass());
-					}
-				});
+			catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			finally {
+				logger.info("After invoke method {} for class {}", method.getName(), method.getDeclaringClass());
+			}
+		}
 	}
 
 	public static void start(String className) throws Exception {

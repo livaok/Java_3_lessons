@@ -8,5 +8,6 @@ public class ProgramLauncher {
 	public static void main(String[] args) throws Exception {
 		TestLauncher.start(ClassTest1.class);
 		TestLauncher.start(ClassTest2.class.getName());
+		TestLauncher.start(ClassTest3.class);
 	}
 }
